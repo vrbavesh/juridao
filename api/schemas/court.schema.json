@@ -1,0 +1,40 @@
+{
+ "$schema": "http://json-schema.org/draft-07/schema#",
+ "type": "object",
+ "required": [
+  "id",
+  "name",
+  "minStake",
+  "feePerJuror",
+  "alphaBps",
+  "cases",
+  "totalStaked",
+  "policy"
+ ],
+ "properties": {
+  "id": {
+   "type": "integer"
+  },
+  "name": {
+   "type": "string"
+  },
+  "minStake": {
+   "type": "integer"
+  },
+  "feePerJuror": {
+   "type": "integer"
+  },
+  "alphaBps": {
+   "type": "integer"
+  },
+  "cases": {
+   "type": "integer"
+  },
+  "totalStaked": {
+   "type": "integer"
+  },
+  "policy": {
+   "type": "string"
+  }
+ }
+}

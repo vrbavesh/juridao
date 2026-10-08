@@ -1,0 +1,43 @@
+{
+ "$schema": "http://json-schema.org/draft-07/schema#",
+ "type": "object",
+ "required": [
+  "id",
+  "by",
+  "role",
+  "title",
+  "description",
+  "fingerprint",
+  "at"
+ ],
+ "properties": {
+  "id": {
+   "type": "integer"
+  },
+  "by": {
+   "type": "string"
+  },
+  "role": {
+   "enum": [
+    "client",
+    "freelancer",
+    "other"
+   ]
+  },
+  "title": {
+   "type": "string"
+  },
+  "description": {
+   "type": "string"
+  },
+  "fileName": {
+   "type": "string"
+  },
+  "fingerprint": {
+   "type": "string"
+  },
+  "at": {
+   "type": "number"
+  }
+ }
+}

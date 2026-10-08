@@ -1,0 +1,73 @@
+{
+ "$schema": "http://json-schema.org/draft-07/schema#",
+ "type": "object",
+ "required": [
+  "id",
+  "client",
+  "freelancer",
+  "amount",
+  "deadline",
+  "courtId",
+  "numJurors",
+  "title",
+  "description",
+  "criteria",
+  "status"
+ ],
+ "properties": {
+  "id": {
+   "type": "integer"
+  },
+  "client": {
+   "type": "string"
+  },
+  "freelancer": {
+   "type": "string"
+  },
+  "amount": {
+   "type": "integer"
+  },
+  "deadline": {
+   "type": "number"
+  },
+  "courtId": {
+   "type": "integer"
+  },
+  "numJurors": {
+   "type": "integer"
+  },
+  "title": {
+   "type": "string"
+  },
+  "description": {
+   "type": "string"
+  },
+  "criteria": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "status": {
+   "enum": [
+    "Created",
+    "Delivered",
+    "Approved",
+    "Disputed",
+    "Resolved"
+   ]
+  },
+  "disputeId": {
+   "type": [
+    "integer",
+    "null"
+   ]
+  },
+  "ruling": {
+   "type": [
+    "integer",
+    "null"
+   ]
+  }
+ }
+}

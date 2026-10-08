@@ -1,0 +1,68 @@
+{
+ "$schema": "http://json-schema.org/draft-07/schema#",
+ "type": "object",
+ "required": [
+  "id",
+  "dealId",
+  "courtId",
+  "partyA",
+  "partyB",
+  "question",
+  "answers",
+  "period",
+  "periodStart",
+  "round",
+  "rounds",
+  "evidence"
+ ],
+ "properties": {
+  "id": {
+   "type": "integer"
+  },
+  "dealId": {
+   "type": "integer"
+  },
+  "courtId": {
+   "type": "integer"
+  },
+  "partyA": {
+   "type": "string"
+  },
+  "partyB": {
+   "type": "string"
+  },
+  "question": {
+   "type": "string"
+  },
+  "answers": {
+   "type": "object"
+  },
+  "period": {
+   "enum": [
+    "Evidence",
+    "Commit",
+    "Reveal",
+    "Appeal",
+    "Executed"
+   ]
+  },
+  "periodStart": {
+   "type": "number"
+  },
+  "round": {
+   "type": "integer"
+  },
+  "rounds": {
+   "type": "array"
+  },
+  "evidence": {
+   "type": "array"
+  },
+  "finalRuling": {
+   "type": [
+    "integer",
+    "null"
+   ]
+  }
+ }
+}

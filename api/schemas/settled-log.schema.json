@@ -1,0 +1,40 @@
+{
+ "$schema": "http://json-schema.org/draft-07/schema#",
+ "type": "object",
+ "required": [
+  "t",
+  "type",
+  "disputeId",
+  "who",
+  "coherent",
+  "ethReward",
+  "juriReward",
+  "penalty"
+ ],
+ "properties": {
+  "t": {
+   "type": "number"
+  },
+  "type": {
+   "const": "settled"
+  },
+  "disputeId": {
+   "type": "integer"
+  },
+  "who": {
+   "type": "string"
+  },
+  "coherent": {
+   "type": "boolean"
+  },
+  "ethReward": {
+   "type": "integer"
+  },
+  "juriReward": {
+   "type": "integer"
+  },
+  "penalty": {
+   "type": "integer"
+  }
+ }
+}

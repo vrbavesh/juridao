@@ -1,0 +1,13 @@
+# DECISIONS.md
+
+- 2026-10-08 | D1-0 | Complete Pack (`juridao-engine.js`, `selftest.js`, `juridao-engine.test.js`) sourced from `C:\Users\HP\Documents\neuraldao\reference` (the earlier ThinkRoot phase-00 attempt) and copied into `reference/` — the three files shipped in that project's `reference/` folder.
+- 2026-10-08 | D1-0 | `reference/src/lib/juridao-engine.js` added as a verbatim shim copy so `node reference/juridao-engine.test.js` resolves its `./src/lib/juridao-engine.js` import and prints `ALL TESTS PASSED`. Never edited; the engine itself lives at `src/lib/juridao-engine.js` (D1-1) and is the copy the app uses.
+- 2026-10-08 | D1-0 | Old chain-artifact deletions (`contracts/`, `api/openapi.yaml`, `plans/juridao-build.md`) were already committed at `e88ff4f`; no further action.
+- 2026-10-08 | D1-0 | Stack: Vite + React 18 + react-router-dom 6 + Tailwind 3 (spec allows "npm run build (or ThinkRoot's build)"). `npm run check` = engine tests + flow tests + contract check + format check + build.
+- 2026-10-08 | D1-0 | `api/engine-api.yaml` authored per plan §B1; `api/schemas/*` pragmatic-shape documentation; check-contract uses required-key + critical-field asserts (strict JSON Schema rejected as brittle, per plan).
+- 2026-10-08 | D1-0 | Contract gate relaxations vs plan text: storage-key gate scans only literal args of `localStorage.getItem/setItem/removeItem` calls; registry keys not yet referenced in code (Dev2/Dev3 pages pending) print INFO instead of failing — code-used-but-unregistered keys still fail.
+- 2026-10-08 | D1-1 | `src/lib/flowtests.js` extracted verbatim from SPEC §E1 (21 of 21 pass in Node).
+- 2026-10-08 | D1-1 | `store.js`: `useJuri()` returns `{ state, account, setAccount, act }`; a module-level 2 s interval runs `autoAdvance` + save + re-render; `window.JuriDAO`/`window.juriState` set. Account selector state is in-memory (spec silent).
+- 2026-10-08 | D1-2 | `src/lib/format.js` pulled forward (originally Dev2's D2-0) because Courts/Rewards/Juror needed money formatting; it follows the D2-0 spec exactly and remains Dev2's file to extend.
+- 2026-10-08 | D1-1..D1-3 | The app shell (`App.jsx`, `Header`, `Banner`, `Toast`, `EmptyState`, page placeholders) was implemented minimally by Dev1 so Dev1's pages mount and the app builds. These files remain owned by Dev3 (D3-1) and must be replaced/extended by it; Dev1 did not add logic beyond routing + header essentials.
+- 2026-10-08 | D1-2 | CourtRow was inlined into `src/pages/Courts.jsx` (`CourtRowFragment`) for the mobile stacked-cards layout; the standalone `src/components/CourtRow.jsx` was removed to avoid duplication. Mobile tables render as stacked cards below 640 px.

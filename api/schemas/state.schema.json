@@ -1,0 +1,50 @@
+{
+ "$schema": "http://json-schema.org/draft-07/schema#",
+ "type": "object",
+ "required": [
+  "params",
+  "accounts",
+  "courts",
+  "stake",
+  "pending",
+  "treasury",
+  "deals",
+  "disputes",
+  "log"
+ ],
+ "properties": {
+  "version": {
+   "type": "integer"
+  },
+  "timeOffset": {
+   "type": "number"
+  },
+  "params": {
+   "type": "object"
+  },
+  "accounts": {
+   "type": "object"
+  },
+  "courts": {
+   "type": "array"
+  },
+  "stake": {
+   "type": "object"
+  },
+  "pending": {
+   "type": "object"
+  },
+  "treasury": {
+   "type": "object"
+  },
+  "deals": {
+   "type": "array"
+  },
+  "disputes": {
+   "type": "array"
+  },
+  "log": {
+   "type": "array"
+  }
+ }
+}

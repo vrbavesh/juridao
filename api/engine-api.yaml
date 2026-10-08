@@ -1,0 +1,280 @@
+# api/engine-api.yaml — B1 manifest: the JuriDAO engine surface.
+# Dev1 transcription from SPEC §5. Any change needs its own PR merged before consumers.
+constants:
+  ETH: 1000000        # 1 ETH = 1,000,000 micro-ETH (integer)
+  TOKENS_PER_ETH: 10000
+  FAUCET_AMOUNT: 5000
+  MAX_ROUNDS: 3
+  price line: "1 ETH = 10,000 JURI (dummy)"
+
+enums:
+  period: [Evidence, Commit, Reveal, Appeal, Executed]
+  dealStatus: [Created, Delivered, Approved, Disputed, Resolved]
+  ruling: ["0 = no majority (split 50/50)", "1 = pay the freelancer", "2 = refund the client"]
+  jurorCaseStatus: [needs commit, committed, needs reveal, revealed, missed, settled]
+  evidenceRole: [client, freelancer, other]
+  settledLogEvent: [ethReward, juriReward, penalty, coherent, disputeId, who]
+
+# Storage-key registry (B3). Keys listed here and only here may be used.
+x-storage-keys:
+  - juridao_state_v2
+  - juri_vote_{disputeId}_{round}_{account}   # template prefix juri_vote_
+  - juri_testlab_runs
+  - juri_testlab_checks
+  - juri_testlab_log
+  - juri_notifications_read
+
+operations:
+  - name: createInitialState
+    params: []
+    returns: state
+    throws: []
+    purity: pure
+    phase-guard: none
+  - name: nowOf
+    params:
+      - { name: s, type: state }
+    returns: number (seconds)
+    throws: []
+    purity: pure
+    phase-guard: none
+  - name: buyTokens
+    params:
+      - { name: s, type: state }
+      - { name: id, type: string }
+      - { name: ethMicro, type: number }
+    returns: number (JURI received)
+    throws: [not enough ETH, "must be a number", "whole number"]
+    purity: state-mutating
+    phase-guard: none
+  - name: faucet
+    params:
+      - { name: s, type: state }
+      - { name: id, type: string }
+    returns: number (JURI granted)
+    throws: ["Unknown account"]
+    purity: state-mutating
+    phase-guard: none
+  - name: stakeJuri
+    params:
+      - { name: s, type: state }
+      - { name: id, type: string }
+      - { name: courtId, type: number }
+      - { name: amount, type: number }
+    returns: number (new stake)
+    throws: [minimum, "insufficient"]
+    purity: state-mutating
+    phase-guard: none
+  - name: unstakeJuri
+    params:
+      - { name: s, type: state }
+      - { name: id, type: string }
+      - { name: courtId, type: number }
+      - { name: amount, type: number }
+    returns: number (new stake)
+    throws: ["locked", "insufficient"]
+    purity: state-mutating
+    phase-guard: none
+  - name: createDeal
+    params:
+      - { name: s, type: state }
+      - { name: client, type: string }
+      - { name: o, type: object }
+    returns: number (deal id)
+    throws: ["freelancer", balance, court, jurors, deadline]
+    purity: state-mutating
+    phase-guard: none
+  - name: markDelivered
+    params:
+      - { name: s, type: state }
+      - { name: caller, type: string }
+      - { name: dealId, type: number }
+      - { name: note, type: string }
+      - { name: fileName, type: string }
+      - { name: fileText, type: string }
+    returns: undefined
+    throws: [freelancer, status]
+    purity: state-mutating
+    phase-guard: none
+  - name: approveDeal
+    params:
+      - { name: s, type: state }
+      - { name: caller, type: string }
+      - { name: dealId, type: number }
+    returns: undefined
+    throws: [client, status]
+    purity: state-mutating
+    phase-guard: none
+  - name: raiseDispute
+    params:
+      - { name: s, type: state }
+      - { name: caller, type: string }
+      - { name: dealId, type: number }
+    returns: number (dispute id)
+    throws: [fee, deadline, status, permission]
+    purity: state-mutating
+    phase-guard: none
+  - name: submitEvidence
+    params:
+      - { name: s, type: state }
+      - { name: caller, type: string }
+      - { name: disputeId, type: number }
+      - { name: o, type: object }
+    returns: object (evidence item)
+    throws: [Executed, dispute]
+    purity: state-mutating
+    phase-guard: not Executed
+  - name: makeCommit
+    params:
+      - { name: choice, type: number }
+      - { name: salt, type: string }
+      - { name: addr, type: string }
+    returns: string (sealed vote)
+    throws: []
+    purity: pure
+    phase-guard: none
+  - name: randomSalt
+    params: []
+    returns: string
+    throws: []
+    purity: pure
+    phase-guard: none
+  - name: commitVote
+    params:
+      - { name: s, type: state }
+      - { name: caller, type: string }
+      - { name: disputeId, type: number }
+      - { name: commit, type: string }
+    returns: undefined
+    throws: [Commit, phase, drawn, not drawn]
+    purity: state-mutating
+    phase-guard: Commit
+  - name: revealVote
+    params:
+      - { name: s, type: state }
+      - { name: caller, type: string }
+      - { name: disputeId, type: number }
+      - { name: choice, type: number }
+      - { name: salt, type: string }
+      - { name: justification, type: string }
+    returns: undefined
+    throws: [Reveal, hash, phase, "must match"]
+    purity: state-mutating
+    phase-guard: Reveal
+  - name: fundAppeal
+    params:
+      - { name: s, type: state }
+      - { name: caller, type: string }
+      - { name: disputeId, type: number }
+      - { name: side, type: number }
+      - { name: ethMicro, type: number }
+    returns: number (amount actually taken)
+    throws: [Appeal, window, half, funds]
+    purity: state-mutating
+    phase-guard: Appeal
+  - name: executeRuling
+    params:
+      - { name: s, type: state }
+      - { name: disputeId, type: number }
+    returns: undefined
+    throws: [window, "last round", Appeal]
+    purity: state-mutating
+    phase-guard: Appeal (after window or last round)
+  - name: withdrawAppealFunds
+    params:
+      - { name: s, type: state }
+      - { name: caller, type: string }
+      - { name: disputeId, type: number }
+      - { name: roundIndex, type: number }
+      - { name: side, type: number }
+    returns: number (amount withdrawn)
+    throws: [Executed, "no funds", round]
+    purity: state-mutating
+    phase-guard: Executed
+  - name: claimRewards
+    params:
+      - { name: s, type: state }
+      - { name: id, type: string }
+    returns: object { eth, juri }
+    throws: ["Unknown account"]
+    purity: state-mutating
+    phase-guard: none
+  - name: advancePeriod
+    params:
+      - { name: s, type: state }
+      - { name: disputeId, type: number }
+      - { name: force, type: boolean }
+    returns: boolean
+    throws: [dispute, period]
+    purity: state-mutating
+    phase-guard: timer ended (unless force)
+  - name: autoAdvance
+    params:
+      - { name: s, type: state }
+    returns: undefined
+    throws: []
+    purity: state-mutating
+    phase-guard: none
+  - name: skipPeriod
+    params:
+      - { name: s, type: state }
+      - { name: disputeId, type: number }
+    returns: undefined
+    throws: [dispute]
+    purity: state-mutating
+    phase-guard: none
+  - name: skipTime
+    params:
+      - { name: s, type: state }
+      - { name: seconds, type: number }
+    returns: undefined
+    throws: [number]
+    purity: state-mutating
+    phase-guard: none
+  - name: jurorCases
+    params:
+      - { name: s, type: state }
+      - { name: id, type: string }
+    returns: array of { disputeId, round, draws, status, closed }
+    throws: ["Unknown account"]
+    purity: pure
+    phase-guard: none
+  - name: jurorStats
+    params:
+      - { name: s, type: state }
+      - { name: id, type: string }
+    returns: object { settled, coherent, performancePct }
+    throws: ["Unknown account"]
+    purity: pure
+    phase-guard: none
+  - name: notificationsFor
+    params:
+      - { name: s, type: state }
+      - { name: id, type: string }
+    returns: array newest first of { at, text, link }
+    throws: ["Unknown account"]
+    purity: pure
+    phase-guard: none
+  - name: periodEnd
+    params:
+      - { name: s, type: state }
+      - { name: dispute, type: object }
+    returns: number (seconds)
+    throws: []
+    purity: pure
+    phase-guard: none
+  - name: disputeWarning
+    params:
+      - { name: s, type: state }
+      - { name: dispute, type: object }
+    returns: string ("" when clear)
+    throws: []
+    purity: pure
+    phase-guard: none
+  - name: fileFingerprint
+    params:
+      - { name: text, type: string }
+    returns: string
+    throws: []
+    purity: pure
+    phase-guard: none

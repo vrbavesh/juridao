@@ -1,0 +1,55 @@
+{
+ "$schema": "http://json-schema.org/draft-07/schema#",
+ "type": "object",
+ "required": [
+  "numDraws",
+  "jurors",
+  "ruling",
+  "feesPool",
+  "tally",
+  "funded",
+  "required",
+  "fullyFunded",
+  "appealed",
+  "roundCost",
+  "contrib"
+ ],
+ "properties": {
+  "numDraws": {
+   "type": "integer"
+  },
+  "jurors": {
+   "type": "object"
+  },
+  "ruling": {
+   "type": [
+    "integer",
+    "null"
+   ]
+  },
+  "feesPool": {
+   "type": "integer"
+  },
+  "tally": {
+   "type": "array"
+  },
+  "funded": {
+   "type": "array"
+  },
+  "required": {
+   "type": "array"
+  },
+  "fullyFunded": {
+   "type": "array"
+  },
+  "appealed": {
+   "type": "boolean"
+  },
+  "roundCost": {
+   "type": "integer"
+  },
+  "contrib": {
+   "type": "object"
+  }
+ }
+}
