@@ -1,5 +1,19 @@
 # handoff/dev2.md
-- Done: D2-0 (evidence.js + format asserts merged to main via PR #1); D2-1 Deals (Deals list, NewDeal, DealDetail, DealCard — PR merged). D2-2 dispute page and D2-3 vote flow and D2-4 appeals are next.
-- Scores: `npm run check` green on every merged step — engine 21/21 ALL TESTS PASSED, flow 21 of 21 passed, CONTRACT CHECKS PASSED, format PASS, build OK.
-- Contract: engine API in api/engine-api.yaml; storage keys in x-storage-keys; act() in src/lib/store.js. Void engine calls (`markDelivered`, `approveDeal`, `commitVote`...) return the completed closure value only on success — wrap as `act((s) => { JuriDAO.x(...); return true; })` and branch the success toast on the sentinel, because `act()` returns `undefined` for both void-success and engine-error.
-- Next: D2-2 Dispute page (PhaseTracker, EvidenceList, EvidenceForm), D2-3 Juror vote flow (VotePanel, CaseJuror), D2-4 Appeals (AppealPanel).
+- Status: DONE — all Dev2 steps D2-0..D2-5 implemented, merged to main, and smoke-verified on the live app.
+- Done, in order (all merged via `gh pr merge --merge`, main HEAD `0acce05`):
+  - D2-0 Evidence utils — PR #1 (`src/lib/evidence.js` + format asserts).
+  - D2-1 Deals — PR #2 (`src/pages/Deals.jsx`, `NewDeal.jsx`, `DealDetail.jsx`, `DealCard.jsx`, raise-dispute modal).
+  - D2-2 Dispute page — PR #3 (`DisputeDetail.jsx`, `PhaseTracker.jsx`, `EvidenceList.jsx`, `EvidenceForm.jsx`).
+  - D2-3 Juror vote flow — PR #4 (`CaseJuror.jsx`, `VotePanel.jsx`).
+  - D2-4 Appeals — PR #5 (`AppealPanel.jsx` + dispute-page mount).
+  - D2-5 Smoke-test fixes — PR #6 (DealCard counterparty label used `deal.client` as the viewing account; now takes the current `account` from `useJuri()`).
+- Scores: `npm run check` green on every merged step and on main — engine 21/21, flow 21 of 21, CONTRACT PASS, format PASS, build OK.
+- Contract notes for downstream work:
+  - Engine API in `api/engine-api.yaml`; storage-key registry in `scripts/check-contract.mjs` (6 keys incl. `juri_vote_{disputeId}_{round}_{account}`).
+  - Void engine calls (`markDelivered`, `approveDeal`, `commitVote`...) return the completed closure value only on success — wrap as `act((s) => { JuriDAO.x(...); return true; })` and branch the success toast on the sentinel, because `act()` returns `undefined` for both void-success and engine-error.
+  - UI component B4 contracts in `api/ui-contracts.md`; `DealCard`, `PhaseTracker`, `EvidenceList`, `EvidenceForm`, `AppealPanel`, `VotePanel` all comply.
+- Secrecy rule as shipped: counts-only during Evidence and Commit; tally/choices/justifications from Reveal onward (resolution recorded in DECISIONS.md 2026-10-08 D2-2).
+- Live-app smoke findings (OpenChamber panel, main): verified landing, Deals flow (fee 11.0000->10.9850), dispute page in every phase, seal/reveal via VotePanel (backup saved/downloaded, count 0->1), AppealPanel funding (defender 0.0140 / challenger 0.0280, second-half challenger lock, withdraw exact 12.4560->12.4700), keeper auto-advance on 60s rounds. No product bugs remain.
+- Test-harness notes (decisions recorded in DECISIONS.md 2026-10-08 D2-5): panel can't drive the native header <select> — temp `#as=` hash switch was added to store.js and fully reverted afterwards (no net diff); Vite HMR full-reloads wipe the panel's in-memory state after store.js edits — restart the dev server before long browser sessions; seed state survives same-document navigation only, so smoke flows stay in one page lifetime.
+- Known issues: none in product code.
+- Next single action for the repo: D3-5 (Dev3: full §13 demo run + mobile audit) and D1-4 (Dev1: final verification) are now unblocked.

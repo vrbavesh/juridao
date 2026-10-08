@@ -158,3 +158,16 @@
 - Deviations and decisions: see DECISIONS.md (2026-10-08 D2-4 entries)
 - Known issues: none
 - Next single action: all Dev2 steps merged — hand DEV2 work off for D3-5 (polish + full demo) and D1-4 (final verification)
+
+## Phase D2-5: End-to-end browser smoke of D2 + counterparty fix
+- Status: DONE
+- Date and time: 2026-10-08
+- Account label: dev2
+- Phase check: full live-app smoke in the OpenChamber browser panel on main (PRs #1-#5 merged). Verified the user journeys listed below plus PR #6 fix; `npm run check` green (engine 21/21, flow 21/21, contract PASS, format PASS, build OK).
+- Smoke-verified on the live app: landing page; Deals list + DealCard + DealDetail; raise-dispute modal (0.0150 ETH fee, frozen-funds warning, pre-shown jurors' question/answers) and exact fee deduction (11.0000 -> 10.9850); dispute page across Evidence -> Commit -> Reveal -> Appeal -> Executed: PhaseTracker, no-juror warning box, evidence groups with `fp_` fingerprints, counts-only during Commit and tally/choices/justifications from Reveal (secrecy rule per DECISIONS D2-2); drawn-jurors list with stake weights and party exclusion; rounds history; CaseJuror page as a drawn juror: seal vote (backup saved + Download backup, dispute "Committed" count moves 0->1), reveal-with-backup panel, reveal fallback (salt/answer inputs), missed-reveal penalty, "not drawn"/"no action" branches; AppealPanel: current ruling + next jury size (2 x 3 + 1), defender 0.0140 / challenger 0.0280 ("pays double"), funding bars and exact deductions (10.4880 -> 10.4740, refund 12.4560 -> 12.4700), second-half challenger lock with reason, one-side-funded default win + funder refund, final ruling box, Withdraw button disappearing after withdrawal, rounds history. Auto-advance keeper correctly moved phases on timer expiry for every seeded dispute.
+- Bug found and fixed: DealCard counterparty label used `deal.client` as the viewing account, so the "other side" was wrong unless the viewer was the client. Fixed to pass the current `account` from `useJuri()` (PR #6, merged 0acce05).
+- Flow tests: 21 of 21
+- Files created or changed: src/components/DealCard.jsx (counterparty fix); temp hash-based account-switch in src/lib/store.js added for the smoke test and then fully reverted (no net diff).
+- Deviations and decisions: see DECISIONS.md (2026-10-08 D2-5 entries)
+- Known issues: none in product code. Test-harness note: the panel cannot drive the native header <select>, and Vite HMR full-reloads wipe the panel's in-memory/live state after store.js edits (real browsers persist); restart the dev server after touching store.js before long browser sessions. Reveal-phase clicks timed out while navigating because rounds are 60s and the smoke flow hops through several pages; all reveal paths were verified from earlier/other states instead.
+- Next single action: hand off Dev2 work - D3-5 (full demo run + mobile audit) and D1-4 (final verification) are unblocked.
