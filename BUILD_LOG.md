@@ -47,3 +47,58 @@
 - Deviations and decisions: none beyond DECISIONS.md
 - Known issues: CaseJuror, Deals, Dispute, Admin, TestLab, Landing, Guide, Notifications are placeholder pages owned by Dev2/Dev3 (D2-1..D3-5)
 - Next single action: user asked to push; then D1-4 final verification once Dev2/Dev3 land
+
+## Phase D3-0: ui-contracts.md
+- Status: DONE
+- Date and time: 2026-10-08
+- Account label: dev3
+- Phase check: `api/ui-contracts.md` exists with prop contracts for every shared component (Header/Banner/Toast/EmptyState/StatCard/Countdown/RingChart/FlowTestRunner/BuyJuriModal/CourtRow/DealCard/PhaseTracker/EvidenceList/EvidenceForm/AppealPanel/VotePanel/JurorInspector/TestLab/Notifications/Admin)
+- Flow tests: 21 of 21
+- Files created or changed: api/ui-contracts.md
+- Deviations and decisions: see DECISIONS.md
+- Next single action: D3-1 shell
+
+## Phase D3-1: Shell
+- Status: DONE
+- Date and time: 2026-10-08
+- Account label: dev3
+- Phase check: every route renders and switches account; no sideways scroll at 375 px (nav collapses under 768 px, minimum 44 px controls, wrapped countdowns); Header mode toggle now shows active mode (Deals-ish vs Juror-ish routes)
+- Flow tests: 21 of 21
+- Files created or changed: src/components/Header.jsx (active mode highlight, menu closes on nav click), api/ui-contracts.md frozen
+- Deviations and decisions: Dev1's provisional Header/App.jsx/placeholders are compatible and kept; BuyJuriModal (Dev1) mounted once at Header root
+- Next single action: D3-2 landing/guide
+
+## Phase D3-2: Landing and Guide
+- Status: DONE
+- Date and time: 2026-10-08
+- Account label: dev3
+- Phase check: `npm run build` succeeds; Landing renders hero/story/6 steps/4 Why cards/live stats labelled "demo data"/audience blocks/FAQ/footer; Guide covers lifecycle example, juror definition, draw mechanics, commit/reveal, rewards+penalties worked numbers, appeals costs, what JuriDAO can(not) do, Kleros mention; both render with zero data (empty states)
+- Flow tests: 21 of 21
+- Files created or changed: src/pages/Landing.jsx, src/pages/Guide.jsx
+- Next single action: D3-3 notifications+admin
+
+## Phase D3-3: Notifications and Admin
+- Status: DONE
+- Date and time: 2026-10-08
+- Account label: dev3
+- Phase check: Notifications page lists `notificationsFor` newest-first with links and read/unread (bell badge now matches: same `juri_notifications_read` rule); Admin shows demo controls — per-dispute skip, fast-forward 60 s, faucet-all, auto-stake-all-jurors, engine self-test (runSelfTest returns [{name,ok,detail}], shows "7 of 7 passed"), FlowTestRunner mounted (21 of 21), reset demo, live last-50 engine log, link to Test Lab; `npm run check` green
+- Engine self-test: runSelfTest executes against the bundled module (uses throwaway state)
+- Files created or changed: src/pages/Notifications.jsx, src/pages/Admin.jsx
+- Next single action: D3-4 testlab
+
+## Phase D3-4: Test Lab
+- Status: DONE
+- Date and time: 2026-10-08
+- Account label: dev3
+- Phase check: `/testlab` renders panels A–G; Panel A token tests PASS on live balances (+1,000 JURI on 0.1 ETH, +5,000 faucet, 100 ETH buy rejected with unchanged balance); Panel B seeds 1–6 each create a fresh case (with logged results, last-seed link, majority-answer selector, "one juror against majority" checkbox); Panel C JurorInspector table + three structural checks (parties excluded, total draws == round size, every drawn juror notified); Panel D reuses FlowTestRunner (21 of 21); Panel E 21-item manual checklist persisted to `juri_testlab_checks`; Panel F last-30 lab log to `juri_testlab_log`; Panel G embeds BUILD_LOG.md via Vite `?raw` import (confirmed in the build output as its own chunk, graceful fallback if disabled)
+- Files created or changed: src/pages/TestLab.jsx, src/components/JurorInspector.jsx
+- Deviations and decisions: see DECISIONS.md
+- Next single action: D3-5 polish + demo run (blocked on Dev2 pages)
+
+## Phase D3-5: Polish, mobile, demo run
+- Status: BLOCKED (partial)
+- Date and time: 2026-10-08
+- Account label: dev3
+- Phase check: `npm run check` green; Tailwind mobile rules applied to all Dev3 pages (menu button <768 px, stacked cards, ≥44 px controls, full-width bottom-sheet modals, no sideways scroll at 375 px by CSS review). The SPEC §13 demo script CANNOT run end-to-end until Dev2's pages exist: Deals, NewDeal, DealDetail, DisputeDetail, CaseJuror, AppealPanel are still placeholders. Seeds 1–6 confirm the engine side works (flow tests 21 of 21).
+- Known issues: Deal flow pages, voting UI, appeals UI, evidence form are missing — Dev2 (D2-1..D2-4) work not started
+- Next single action: Dev2 implements D2-1..D2-4; then Dev3 re-runs this phase for the full demo
