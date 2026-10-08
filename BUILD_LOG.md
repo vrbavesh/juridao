@@ -125,3 +125,14 @@
 - Deviations and decisions: see DECISIONS.md (2026-10-08 D2-1 entries)
 - Known issues: none
 - Next single action: D2-2 dispute page
+
+## Phase D2-2: Dispute page
+- Status: DONE
+- Date and time: 2026-10-08
+- Account label: dev2
+- Phase check: `npm run check` green (engine 21/21, flow 21/21, contract PASS, format PASS, build OK). `/disputes/:id` renders the header (number, deal link, court, question, answers), PhaseTracker (Evidence -> Jurors drawn -> Voting(Commit) -> Reveal -> Appeal window -> Final with round number and live countdown to `periodEnd`), the yellow `disputeWarning` box, grouped evidence with fingerprint badges + Add-evidence form until Executed, the jurors section with "N of M committed"/"N of M revealed" and the C3 "How the jury was drawn" box (per-juror stake weight %, parties-excluded tick, jury size), collapsible rounds history, and the final ruling banner with the payout. Secrecy: during Evidence and Commit only counts are shown — no choices anywhere; tally/choices/justifications appear only after the phase leaves Commit (Reveal onward).
+- Flow tests: 21 of 21
+- Files created or changed: src/pages/DisputeDetail.jsx, src/components/PhaseTracker.jsx, src/components/EvidenceList.jsx, src/components/EvidenceForm.jsx
+- Deviations and decisions: see DECISIONS.md (2026-10-08 D2-2 entries, including the C3 vs 8.5 secrecy reading)
+- Known issues: none
+- Next single action: D2-3 juror vote flow (VotePanel, CaseJuror)
