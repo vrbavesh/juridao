@@ -1,9 +1,0 @@
-node_modules/
-dist/
-artifacts/
-cache/
-typechain-types/
-.env
-*.log
-mock-ipfs/data/
-contracts/deployments.json
