@@ -114,3 +114,14 @@
 - Deviations and decisions: see DECISIONS.md (2026-10-08 D2-0 entries)
 - Known issues: none
 - Next single action: D2-1 deals
+
+## Phase D2-1: Deals
+- Status: DONE
+- Date and time: 2026-10-08
+- Account label: dev2
+- Phase check: `npm run check` green (engine 21/21, flow 21/21, contract PASS, format PASS, build OK). Deals list shows stat cards (active / in dispute / completed / total ETH locked) plus per-account cards with status badges and action-needed tags; NewDeal creates a deal through `createDeal` (freelancer select, ETH amount, days-from-now deadline via `nowOf`, criteria add/remove with at least one, court + 3/5/7 jurors, "fee x jurors" cost preview) and navigates to `/deals/:id`; DealDetail renders the timeline, delivery note + optional file -> `markDelivered` (engine fingerprint), Approve -> payment released, Raise-dispute confirm modal with fee / frozen-funds warning / the question and answers jurors will see. The phase-6 numbers (Sam 9.0000 ETH, Deepa 9.9940 after dispute) are verified by hand in the demo run; deal logic follows the engine contract (act()).
+- Flow tests: 21 of 21
+- Files created or changed: src/pages/Deals.jsx, src/pages/NewDeal.jsx, src/pages/DealDetail.jsx, src/components/DealCard.jsx
+- Deviations and decisions: see DECISIONS.md (2026-10-08 D2-1 entries)
+- Known issues: none
+- Next single action: D2-2 dispute page
