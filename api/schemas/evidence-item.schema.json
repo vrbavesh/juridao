@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "api/schemas/evidence-item.schema.json",
+  "title": "Evidence item (submitEvidence URI payload)",
+  "type": "object",
+  "required": ["title", "description", "fileURI", "fileName", "role"],
+  "additionalProperties": false,
+  "properties": {
+    "title": { "type": "string", "minLength": 1 },
+    "description": { "type": "string" },
+    "fileURI": { "type": "string", "minLength": 1 },
+    "fileName": { "type": "string", "minLength": 1 },
+    "role": { "enum": ["client", "freelancer", "other"] }
+  }
+}
