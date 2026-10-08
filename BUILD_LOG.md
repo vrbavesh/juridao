@@ -147,3 +147,14 @@
 - Deviations and decisions: see DECISIONS.md (2026-10-08 D2-3 entries)
 - Known issues: none
 - Next single action: D2-4 appeals (AppealPanel)
+
+## Phase D2-4: Appeals
+- Status: DONE
+- Date and time: 2026-10-08
+- Account label: dev2
+- Phase check: `npm run check` green (engine 21/21, flow 21/21, contract PASS, format PASS, build OK). AppealPanel mounts on the dispute page in the Appeal period (interactive) and Executed (read-only summary). It shows the current ruling, round number, next jury size `2 x numDraws + 1`, live countdown to `periodStart + params.Appeal`, two funding columns (side 1 pay the freelancer / side 2 refund the client) with `funded/required` bars, "pays double because it is challenging the ruling" on the challenger, amount input + Fund remaining + Fund this side, challenger disabled in the second half with the reason, "No further appeals" on the last round, the rules box, and the Execute ruling button once the window is over. After Executed, per-round/per-side Withdraw buttons appear where `round.contrib[side][account] > 0`. All math goes through `fundAppeal` / `executeRuling` / `withdrawAppealFunds`; both-funding starts a 7-juror round via the engine.
+- Flow tests: 21 of 21
+- Files created or changed: src/components/AppealPanel.jsx, src/pages/DisputeDetail.jsx (mount only)
+- Deviations and decisions: see DECISIONS.md (2026-10-08 D2-4 entries)
+- Known issues: none
+- Next single action: all Dev2 steps merged — hand DEV2 work off for D3-5 (polish + full demo) and D1-4 (final verification)

@@ -7,6 +7,7 @@ import EmptyState from "../components/EmptyState.jsx";
 import PhaseTracker from "../components/PhaseTracker.jsx";
 import EvidenceList from "../components/EvidenceList.jsx";
 import EvidenceForm from "../components/EvidenceForm.jsx";
+import AppealPanel from "../components/AppealPanel.jsx";
 
 // SPEC 8.5 + C3 — Dispute page. Public. Header, PhaseTracker, warning box,
 // evidence (grouped + add form), jurors section with the "How the jury was
@@ -90,6 +91,8 @@ export default function DisputeDetail() {
         revealed={revealed}
         canShowChoices={canShowChoices}
       />
+
+      <AppealPanel dispute={dispute} account={account} />
 
       <section className="bg-[#1c1530] rounded-2xl border border-[#3a2f5a] p-5">
         <h2 className="font-semibold mb-2">Rounds history</h2>
