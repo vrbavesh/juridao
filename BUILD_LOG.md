@@ -102,3 +102,15 @@
 - Phase check: `npm run check` green; Tailwind mobile rules applied to all Dev3 pages (menu button <768 px, stacked cards, ≥44 px controls, full-width bottom-sheet modals, no sideways scroll at 375 px by CSS review). The SPEC §13 demo script CANNOT run end-to-end until Dev2's pages exist: Deals, NewDeal, DealDetail, DisputeDetail, CaseJuror, AppealPanel are still placeholders. Seeds 1–6 confirm the engine side works (flow tests 21 of 21).
 - Known issues: Deal flow pages, voting UI, appeals UI, evidence form are missing — Dev2 (D2-1..D2-4) work not started
 - Next single action: Dev2 implements D2-1..D2-4; then Dev3 re-runs this phase for the full demo
+
+## Phase D2-0: Shared formatting and evidence utils
+- Status: DONE (format.js had been pulled forward by Dev1 at D1-1; Dev2 verified it line-by-line against the D2-0 spec and completed the missing half)
+- Date and time: 2026-10-08
+- Account label: dev2
+- Phase check: `node scripts/check-format.mjs` -> PASS (8 format asserts + 8 evidence asserts); `node scripts/check-contract.mjs` -> CONTRACT CHECKS PASSED
+- Engine self-test: not built yet (Admin mount is D3-3)
+- Flow tests: 21 of 21
+- Files created or changed: src/lib/evidence.js (new), scripts/check-format.mjs (evidence asserts added)
+- Deviations and decisions: see DECISIONS.md (2026-10-08 D2-0 entries)
+- Known issues: none
+- Next single action: D2-1 deals
