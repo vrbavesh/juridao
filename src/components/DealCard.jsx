@@ -43,9 +43,9 @@ export function dealActionTag(deal, account, state) {
 }
 
 export default function DealCard({ deal, onOpen }) {
-  const { state } = useJuri();
+  const { state, account } = useJuri();
   const meta = dealStatusMeta(deal.status);
-  const onnName = dealCounterpartyName(state, deal, deal.client);
+  const onnName = dealCounterpartyName(state, deal, account);
   return (
     <button
       onClick={onOpen}
