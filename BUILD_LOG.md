@@ -136,3 +136,14 @@
 - Deviations and decisions: see DECISIONS.md (2026-10-08 D2-2 entries, including the C3 vs 8.5 secrecy reading)
 - Known issues: none
 - Next single action: D2-3 juror vote flow (VotePanel, CaseJuror)
+
+## Phase D2-3: Juror case page (commit / reveal)
+- Status: DONE
+- Date and time: 2026-10-08
+- Account label: dev2
+- Phase check: `npm run check` green (engine 21/21, flow 21/21, contract PASS, format PASS, build OK). `/cases/:id` shows "You were not drawn for this case" when the account is not in the current round, otherwise question/answers, court policy, delivery criteria, evidence, countdown, the always-visible warning, and the VotePanel: Commit -> radio answer + reasoning -> `makeCommit(choice, randomSalt(), account)` -> `commitVote`, stores `{ choice, salt, reasoning }` under `juri_vote_{disputeId}_{round}_{account}` (registry prefix), shows "Your vote is sealed..." + Download backup; Reveal -> one button reads the stored vote -> `revealVote`, with fallback salt + answer + justification inputs when storage is missing; after Executed the settled-log outcome (coherent, ETH/JURI reward, penalty) renders. Seed-4 stores votes under the same key, so Test Lab's "Reveal my vote" walkthrough works.
+- Flow tests: 21 of 21
+- Files created or changed: src/pages/CaseJuror.jsx, src/components/VotePanel.jsx
+- Deviations and decisions: see DECISIONS.md (2026-10-08 D2-3 entries)
+- Known issues: none
+- Next single action: D2-4 appeals (AppealPanel)
