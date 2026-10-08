@@ -2,54 +2,63 @@ import { Link } from "react-router-dom";
 import { useJuri } from "../lib/store.js";
 import { ethFromMicro, juri } from "../lib/format.js";
 
-// SPEC 8.1: hero, story, six steps, four Why cards, live "demo data" stats, audience blocks, FAQ, footer.
+// SPEC 8.1 — all copy; live stats labelled "demo data".
+const WHY = [
+  ["Random jurors", "A stake-weighted draw, not a fixed panel: nobody can predict who will decide the next case, and the two parties are always excluded from their own jury."],
+  ["Fair incentives", "Vote with the majority and you earn the case's fee in ETH and in JURI. Vote against the majority — or fail to reveal — and your locked JURI is forfeited."],
+  ["Transparent", "Every commit, reveal, funding move and penalty is written to the case log. After the reveal phase, choices and justifications are public; before it, only counts are visible."],
+  ["Automatic enforcement", "Once a ruling executes, the escrowed ETH moves on its own: pay the freelancer, refund the client, or split 50/50 on no-majority. No human operator can override it."],
+];
+
+const STEPS = [
+  ["Create the deal", "The client locks the agreed ETH in the case. Deadline, criteria and the court are fixed up front."],
+  ["Evidence", "Both sides upload text evidence. Files are fingerprinted so nothing is swapped after the fact."],
+  ["Jurors drawn", "Stake-weighted random draw — a juror can be drawn more than once, each draw locking JURI."],
+  ["Vote (sealed)", "Jurors commit a hidden hash first, then reveal. Nobody can see or copy anyone's vote until the reveal phase."],
+  ["Appeal", "Either side can fund the opposing ruling. If both sides fully fund, the case goes to a larger jury."],
+  ["Ruling", "The winning ruling executes automatically: ETH is paid out, penalties redistribute, everyone can claim rewards."],
+];
+
+const FAQ = [
+  ["Is this real money?", "No. Everything here is a simulation: dummy ETH and a dummy JURI token, no wallet, no network, no backend."],
+  ["What does JURI do?", "JURI is the jury token. You stake it to join a court; parts of your stake lock when you are drawn; coherent jurors earn ETH fees and JURI rewards."],
+  ["What happens if jurors disagree?", "The plurality of revealed votes wins. A 50/50 tie pays out 0 — the deal splits 50/50. If nobody reveals, ruling 0 as well."],
+  ["Can a losing party keep appealing forever?", "No. A side may challenge only in the ruling's favour's first half of the window, MAX_ROUNDS is 3, and no appeals run after round 3."],
+];
+
 export default function Landing() {
   const { state } = useJuri();
   const executed = state.disputes.filter((d) => d.period === "Executed").length;
-  const totalStaked = state.courts.reduce((a, c) => a + (c.totalStaked || 0), 0);
+  const totalStaked = state.courts.reduce((n, c) => n + (c.totalStaked || 0), 0);
   const lockedEth = state.deals
-    .filter((d) => d.status === "Created" || d.status === "Delivered" || d.status === "Disputed")
-    .reduce((a, d) => a + (d.amount || 0), 0);
-
-  const features = [
-    ["Random jurors", "Anyone staking JURI can be drawn. Parties to a case can never be drawn as its jurors."],
-    ["Fair incentives", "Vote with the majority and you share the fees. Vote against it or skip, and you lose the JURI locked for that vote."],
-    ["Transparent", "Every draw, commit, reveal, ruling and payout is recorded on the case page for anyone to audit."],
-    ["Automatic enforcement", "The ruling executes by itself. No one can refuse to pay or block the verdict."],
-  ];
-  const steps = [
-    "Create the deal",
-    "Evidence",
-    "Jurors drawn",
-    "Vote (sealed)",
-    "Appeal",
-    "Ruling",
-  ];
+    .filter((d) => ["Created", "Delivered", "Disputed"].includes(d.status))
+    .reduce((n, d) => n + d.amount, 0);
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-10 space-y-12">
+    <div className="max-w-6xl mx-auto px-3 py-8 space-y-10">
       <section className="text-center space-y-4">
-        <h1 className="text-3xl md:text-5xl font-bold text-gray-100">Disputes resolved by a decentralized jury</h1>
-        <p className="text-[#38bdf8] text-lg">When a smart contract can't decide who is right, JuriDAO can.</p>
-        <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
-          <Link to="/deals/new" className="min-h-[44px] inline-flex items-center justify-center rounded-lg bg-[#8b5cf6] text-white px-6">Create a deal</Link>
-          <Link to="/juror" className="min-h-[44px] inline-flex items-center justify-center rounded-lg border border-[#38bdf8] text-[#38bdf8] px-6">Become a juror</Link>
+        <h1 className="text-3xl sm:text-4xl font-bold text-white">Disputes resolved by a decentralized jury</h1>
+        <p className="text-gray-400">When a smart contract can't decide who is right, JuriDAO can.</p>
+        <div className="flex justify-center gap-3 flex-wrap">
+          <Link to="/deals/new" className="min-h-[44px] inline-flex items-center rounded-lg bg-[#8b5cf6] text-white px-5">Create a deal</Link>
+          <Link to="/juror" className="min-h-[44px] inline-flex items-center rounded-lg border border-[#38bdf8] text-[#38bdf8] px-5">Become a juror</Link>
         </div>
       </section>
 
-      <section className="rounded-xl bg-[#1c1530] border border-[#3a2f5a] p-6 space-y-2 text-sm text-gray-300">
-        <p>Sam hires Deepa to build a landing page. The site is delivered, but Sam says it is not what was agreed.</p>
-        <p>They cannot resolve it themselves. A court contract cannot read the brief either.</p>
-        <p>JuriDAO draws staked jurors, takes sealed votes, lets anyone appeal, and pays out the ruling automatically.</p>
+      <section className="bg-[#1c1530] rounded-2xl border border-[#3a2f5a] p-6 text-sm text-gray-300 space-y-1">
+        <p>Sam hires Deepa to build a landing page and locks 1 ETH in the deal.</p>
+        <p>Deepa delivers but Sam does not respond — Approve or Dispute? A centralized platform decides arbitrarily.</p>
+        <p>JuriDAO puts the question to a random, staked jury. The ruling — pay Deepa, refund Sam, or split — executes itself.</p>
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold mb-4">How it works</h2>
-        <ol className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {steps.map((s, i) => (
-            <li key={s} className="rounded-xl bg-[#1c1530] border border-[#3a2f5a] p-4 flex gap-3 items-start">
-              <span className="rounded-full bg-[#8b5cf6]/20 text-[#8b5cf6] w-7 h-7 flex items-center justify-center text-sm shrink-0">{i + 1}</span>
-              <span>{s}</span>
+        <h2 className="text-xl font-semibold mb-4">How a case runs</h2>
+        <ol className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {STEPS.map(([t, d], i) => (
+            <li key={t} className="bg-[#1c1530] rounded-xl border border-[#3a2f5a] p-4">
+              <div className="text-[#8b5cf6] font-bold">{i + 1}.</div>
+              <div className="font-medium">{t}</div>
+              <p className="text-sm text-gray-400 mt-1">{d}</p>
             </li>
           ))}
         </ol>
@@ -57,10 +66,10 @@ export default function Landing() {
 
       <section>
         <h2 className="text-xl font-semibold mb-4">Why JuriDAO</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {features.map(([t, d]) => (
-            <div key={t} className="rounded-xl bg-[#1c1530] border border-[#3a2f5a] p-4">
-              <h3 className="font-semibold">{t}</h3>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {WHY.map(([t, d]) => (
+            <div key={t} className="bg-[#1c1530] rounded-xl border border-[#3a2f5a] p-4">
+              <div className="font-medium">{t}</div>
               <p className="text-sm text-gray-400 mt-1">{d}</p>
             </div>
           ))}
@@ -68,36 +77,47 @@ export default function Landing() {
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold mb-1">Live stats <span className="text-xs text-gray-500">(demo data)</span></h2>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div className="rounded-xl bg-[#1c1530] border border-[#3a2f5a] p-4"><div className="text-2xl font-bold text-[#8b5cf6]">{executed}</div><div className="text-xs text-gray-400">Disputes Executed</div></div>
-          <div className="rounded-xl bg-[#1c1530] border border-[#3a2f5a] p-4"><div className="text-2xl font-bold text-[#38bdf8]">{juri(totalStaked)}</div><div className="text-xs text-gray-400">Total JURI staked</div></div>
-          <div className="rounded-xl bg-[#1c1530] border border-[#3a2f5a] p-4"><div className="text-2xl font-bold text-emerald-400">{ethFromMicro(lockedEth)}</div><div className="text-xs text-gray-400">ETH locked in deals</div></div>
+        <h2 className="text-xl font-semibold mb-1">Live stats <span className="text-xs text-gray-500 align-middle">(demo data)</span></h2>
+        <div className="grid grid-cols-3 gap-3">
+          <div className="bg-[#1c1530] rounded-xl border border-[#3a2f5a] p-4 text-center">
+            <div className="text-2xl font-bold text-[#8b5cf6]">{executed}</div>
+            <div className="text-xs text-gray-400">Disputes executed</div>
+          </div>
+          <div className="bg-[#1c1530] rounded-xl border border-[#3a2f5a] p-4 text-center">
+            <div className="text-2xl font-bold text-[#8b5cf6]">{juri(totalStaked)}</div>
+            <div className="text-xs text-gray-400">JURI staked</div>
+          </div>
+          <div className="bg-[#1c1530] rounded-xl border border-[#3a2f5a] p-4 text-center">
+            <div className="text-2xl font-bold text-[#8b5cf6]">{ethFromMicro(lockedEth)}</div>
+            <div className="text-xs text-gray-400">ETH locked in deals</div>
+          </div>
         </div>
       </section>
 
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <div className="rounded-xl bg-[#1c1530] border border-[#3a2f5a] p-4">
-          <h3 className="font-semibold">Clients & freelancers</h3>
-          <p className="text-sm text-gray-400 mt-1">Escrow the pay, deliver or approve, and let the jury settle real disagreements fairly.</p>
+      <section className="grid sm:grid-cols-2 gap-3">
+        <div className="bg-[#1c1530] rounded-xl border border-[#3a2f5a] p-5">
+          <h3 className="font-semibold">You hire freelancers</h3>
+          <p className="text-sm text-gray-400 mt-1">Create a deal, lock the budget, set the criteria. Raise a dispute if delivery falls short — or if the client goes silent past the deadline.</p>
         </div>
-        <div className="rounded-xl bg-[#1c1530] border border-[#3a2f5a] p-4">
-          <h3 className="font-semibold">Jurors</h3>
-          <p className="text-sm text-gray-400 mt-1">Stake JURI, get drawn, vote honestly, and earn fees — or lose your locked stake.</p>
+        <div className="bg-[#1c1530] rounded-xl border border-[#3a2f5a] p-5">
+          <h3 className="font-semibold">You take freelance work</h3>
+          <p className="text-sm text-gray-400 mt-1">Deliver with evidence, dispute unfair silence, and stake JURI on the side to show skin in the game.</p>
         </div>
       </section>
 
       <section>
         <h2 className="text-xl font-semibold mb-4">FAQ</h2>
-        <div className="space-y-3 text-sm">
-          <details className="rounded-xl bg-[#1c1530] border border-[#3a2f5a] p-4"><summary className="font-semibold cursor-pointer">Is this real money?</summary><p className="text-gray-400 mt-2">No. ETH and JURI are dummy balances for the demo. Nothing leaves your browser.</p></details>
-          <details className="rounded-xl bg-[#1c1530] border border-[#3a2f5a] p-4"><summary className="font-semibold cursor-pointer">Who picks the jurors?</summary><p className="text-gray-400 mt-2">A stake-weighted random draw from staked jurors. Parties to the case are never drawn.</p></details>
-          <details className="rounded-xl bg-[#1c1530] border border-[#3a2f5a] p-4"><summary className="font-semibold cursor-pointer">What happens if I abstain or vote against the majority?</summary><p className="text-gray-400 mt-2">You lose the JURI locked for that vote. Coherent jurors share the fees and penalties.</p></details>
-          <details className="rounded-xl bg-[#1c1530] border border-[#3a2f5a] p-4"><summary className="font-semibold cursor-pointer">Can I appeal a ruling?</summary><p className="text-gray-400 mt-2">Yes. Either side can fund an appeal; if both sides fund it, a fresh larger jury re-decides.</p></details>
+        <div className="space-y-3">
+          {FAQ.map(([q, a]) => (
+            <details key={q} className="bg-[#1c1530] rounded-xl border border-[#3a2f5a] p-4">
+              <summary className="cursor-pointer font-medium">{q}</summary>
+              <p className="text-sm text-gray-400 mt-2">{a}</p>
+            </details>
+          ))}
         </div>
       </section>
 
-      <footer className="text-center text-xs text-gray-500 border-t border-[#3a2f5a] pt-6">
+      <footer className="text-center text-xs text-gray-500 py-4">
         Inspired by Kleros. Simulation for hackathon demo.
       </footer>
     </div>

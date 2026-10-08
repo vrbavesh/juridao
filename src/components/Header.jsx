@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useJuri } from "../lib/store.js";
 import JuriDAO from "../lib/juridao-engine.js";
 import { ethFromMicro, juri } from "../lib/format.js";
@@ -14,10 +14,12 @@ const NAV = [
   ["Rewards", "/rewards"],
   ["Guide", "/guide"],
 ];
+const JUROR_PATHS = ["/juror", "/cases", "/rewards"];
 
 export default function Header() {
   const { state, account, setAccount } = useJuri();
   const navigate = useNavigate();
+  const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [buyOpen, setBuyOpen] = useState(false);
   const acct = state.accounts[account];
@@ -25,6 +27,7 @@ export default function Header() {
   let readSet = new Set();
   try { readSet = new Set(JSON.parse(localStorage.getItem("juri_notifications_read") || "[]")); } catch {}
   const unread = notes.filter((n) => !readSet.has(n.at + "|" + n.text)).length;
+  const mode = JUROR_PATHS.some((p) => location.pathname.startsWith(p)) ? "juror" : "deals";
 
   return (
     <header className="sticky top-0 z-30 bg-[#1c1530]/95 backdrop-blur border-b border-[#3a2f5a]">
@@ -33,7 +36,7 @@ export default function Header() {
         <button className="md:hidden min-h-[44px] min-w-[44px] rounded-lg border border-[#3a2f5a] px-2" onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu">☰</button>
         <nav className={`${menuOpen ? "flex" : "hidden"} md:flex w-full md:w-auto flex-wrap gap-1 text-sm`}>
           {NAV.map(([label, to]) => (
-            <Link key={to} to={to} className="px-3 py-2 rounded-lg hover:bg-[#0f0b1a]">{label}</Link>
+            <Link key={to} to={to} onClick={() => setMenuOpen(false)} className="px-3 py-2 rounded-lg hover:bg-[#0f0b1a]">{label}</Link>
           ))}
         </nav>
         <div className="flex items-center gap-2 ml-auto flex-wrap">
@@ -45,6 +48,7 @@ export default function Header() {
             className="min-h-[44px] rounded-lg bg-[#0f0b1a] border border-[#3a2f5a] px-2 text-sm"
             value={account}
             onChange={(e) => setAccount(e.target.value)}
+            aria-label="Account"
           >
             {ACCOUNTS.map((id) => <option key={id} value={id}>{state.accounts[id].name}</option>)}
           </select>
@@ -54,8 +58,8 @@ export default function Header() {
           </div>
           <button className="min-h-[44px] rounded-lg bg-[#8b5cf6] text-white px-3 text-sm" onClick={() => setBuyOpen(true)}>Buy JURI</button>
           <div className="flex rounded-lg border border-[#3a2f5a] overflow-hidden text-xs">
-            <button className="min-h-[44px] px-3" onClick={() => navigate("/deals")}>Deals</button>
-            <button className="min-h-[44px] px-3 bg-[#0f0b1a]" onClick={() => navigate("/juror")}>Juror</button>
+            <button className={`min-h-[44px] px-3 ${mode === "deals" ? "bg-[#8b5cf6] text-white" : ""}`} onClick={() => navigate("/deals")}>Deals</button>
+            <button className={`min-h-[44px] px-3 ${mode === "juror" ? "bg-[#8b5cf6] text-white" : ""}`} onClick={() => navigate("/juror")}>Juror</button>
           </div>
         </div>
       </div>
